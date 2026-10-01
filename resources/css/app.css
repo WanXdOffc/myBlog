@@ -1,3 +1,45 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
+}
+
+/* Code container copy button & syntax highlight overrides */
+pre {
+  position: relative;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.875rem !important;
+  border-radius: 0.75rem !important;
+}
+
+pre .copy-code-button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  opacity: 0.8;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+pre:hover .copy-code-button {
+  opacity: 1;
+}

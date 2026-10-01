@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
+use Spatie\Feed\Feedable;
+use Spatie\Feed\FeedItem;
 
-class Post extends Model
+class Post extends Model implements Feedable
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $fillable = [
         'user_id',
@@ -70,5 +73,37 @@ class Post extends Model
         return $query->where('status', 'published')
                      ->whereNotNull('published_at')
                      ->orderBy('published_at', 'desc');
+    }
+
+    public function getReadingTimeAttribute(): int
+    {
+        $words = str_word_count(strip_tags($this->content ?? ''));
+        return max(1, (int) ceil($words / 200));
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id'      => $this->id,
+            'title'   => $this->title,
+            'summary' => $this->summary,
+            'content' => strip_tags($this->content ?? ''),
+        ];
+    }
+
+    public function toFeedItem(): FeedItem
+    {
+        return FeedItem::create()
+            ->id($this->id)
+            ->title($this->title)
+            ->summary($this->summary ?? Str::limit(strip_tags($this->content), 200))
+            ->updated($this->updated_at ?? now())
+            ->link(route('posts.show', $this->slug))
+            ->authorName($this->user->name ?? 'Admin');
+    }
+
+    public static function getFeedItems()
+    {
+        return Post::published()->get();
     }
 }

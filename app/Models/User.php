@@ -81,4 +81,14 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Bookmark::class);
     }
+
+    public function hasLiked(Post $post): bool
+    {
+        return $this->likes()->where('post_id', $post->id)->exists();
+    }
+
+    public function hasBookmarked(Post $post): bool
+    {
+        return $this->bookmarks()->where('post_id', $post->id)->exists();
+    }
 }
