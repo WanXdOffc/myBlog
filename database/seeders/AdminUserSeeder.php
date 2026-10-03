@@ -4,26 +4,34 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AdminUserSeeder extends Seeder
 {
-    /**
-     * Buat 1 user Admin utama untuk Tech Blog.
-     */
     public function run(): void
     {
-        User::updateOrCreate(
-            ['email' => 'admin@myblog.com'],
+        $password = config('app.admin.password') ?: Str::password(24);
+        $admin = User::firstOrCreate(
+            ['email' => config('app.admin.email')],
             [
-                'name'              => 'Admin Blog',
-                'email'             => 'admin@myblog.com',
-                'password'          => Hash::make('Admin@12345'),
-                'is_admin'          => true,
+                'name' => config('app.admin.name'),
+                'password' => $password,
+                'is_admin' => true,
                 'email_verified_at' => now(),
-            ]
+            ],
         );
 
-        $this->command->info('✅ Admin user berhasil dibuat: admin@myblog.com / Admin@12345');
+        if (! $admin->wasRecentlyCreated) {
+            $this->command->warn("User {$admin->email} sudah ada. Tidak ada perubahan yang dilakukan.");
+
+            return;
+        }
+
+        $this->command->info("Admin berhasil dibuat: {$admin->email}");
+        if (! config('app.admin.password')) {
+            $this->command->line("Password sementara (simpan sekarang): {$password}");
+        } else {
+            $this->command->line('Password admin diambil dari ADMIN_PASSWORD.');
+        }
     }
 }

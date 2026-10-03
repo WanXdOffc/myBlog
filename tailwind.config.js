@@ -9,15 +9,21 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
+        './resources/js/**/*.js',
     ],
 
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                serif: ['Source Serif 4', 'Georgia', ...defaultTheme.fontFamily.serif],
                 mono: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
             },
             colors: {
+                terracotta: {
+                    DEFAULT: '#8b3e2b',
+                    light: '#e8ad91',
+                },
                 brand: {
                     50: '#f0f9ff',
                     100: '#e0f2fe',

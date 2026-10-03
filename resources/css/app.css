@@ -7,6 +7,168 @@
     scroll-behavior: smooth;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
+
+  body {
+    background-color: #fafafa;
+    color: #3f3f46;
+  }
+
+  .dark body {
+    background-color: #09090b;
+    color: #d4d4d8;
+  }
+
+  :focus-visible {
+    outline: 2px solid #52525b;
+    outline-offset: 3px;
+  }
+
+  .dark :focus-visible {
+    outline-color: #d4d4d8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+.skip-link {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  border-radius: 0.25rem;
+  background: #fff;
+  padding: 0.75rem 1rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.article-prose {
+  color: #3f3f46;
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 1.125rem;
+  line-height: 1.8;
+}
+
+.dark .article-prose {
+  color: #d4d4d8;
+}
+
+.article-prose :where(h1, h2, h3, h4, strong, b, th) {
+  color: #18181b;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.article-prose :where(h2, h3) {
+  scroll-margin-top: 6rem;
+}
+
+.dark .article-prose :where(h1, h2, h3, h4, strong, b, th) {
+  color: #f4f4f5;
+}
+
+.article-prose a {
+  color: #3f3f46;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.dark .article-prose a {
+  color: #e4e4e7;
+}
+
+.article-prose blockquote {
+  border-left-color: #a1a1aa;
+}
+
+.dark .article-prose blockquote {
+  border-left-color: #71717a;
+}
+
+.article-prose :where(code:not(pre code)) {
+  border-radius: 0.3rem;
+  background: #f4f4f5;
+  padding: 0.15em 0.35em;
+  font-size: 0.82em;
+}
+
+.dark .article-prose :where(code:not(pre code)) {
+  background: #27272a;
+}
+
+.article-prose pre.shiki {
+  overflow-x: auto;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.35rem;
+  color: #e4e4e7;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  line-height: 1.75;
+  tab-size: 4;
+}
+
+.article-prose pre.shiki code {
+  display: block;
+  min-width: max-content;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+}
+
+.article-prose .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.5rem 0;
+}
+
+.reading-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 60;
+  height: 2px;
+  background: transparent;
+  pointer-events: none;
+}
+
+.reading-progress__bar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: #52525b;
+  will-change: transform;
+}
+
+.dark .reading-progress__bar {
+  background: #d4d4d8;
+}
+
+.category-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.category-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 /* Custom Scrollbar */
@@ -28,18 +190,48 @@
 /* Code container copy button & syntax highlight overrides */
 pre {
   position: relative;
-  font-family: 'JetBrains Mono', monospace !important;
-  font-size: 0.875rem !important;
-  border-radius: 0.75rem !important;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  border-radius: 0.75rem;
+}
+
+.article-prose pre.code-block {
+  padding-top: 3rem;
 }
 
 pre .copy-code-button {
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
-  opacity: 0.8;
+  z-index: 1;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 0.4rem;
+  background: rgb(39 39 42 / 0.9);
+  padding: 0.35rem 0.6rem;
+  color: #e4e4e7;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  opacity: 0;
   transition: opacity 0.2s ease, background-color 0.2s ease;
 }
+
+pre .copy-code-button:hover {
+  background: rgb(63 63 70 / 0.95);
+}
+
 pre:hover .copy-code-button {
   opacity: 1;
+}
+
+.copy-code-button:focus-visible {
+  opacity: 1;
+}
+
+#toc-nav a[aria-current="location"] {
+  color: #18181b;
+  font-weight: 600;
+}
+
+.dark #toc-nav a[aria-current="location"] {
+  color: #f4f4f5;
 }

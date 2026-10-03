@@ -8,4 +8,13 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        host: '0.0.0.0',
+        hmr: {
+            host: 'localhost',
+        },
+        watch: {
+            usePolling: process.env.VITE_USE_POLLING === 'true',
+        },
+    },
 });

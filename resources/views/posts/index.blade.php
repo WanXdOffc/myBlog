@@ -1,191 +1,145 @@
 @extends('layouts.blog')
 
-@section('title', 'TechJournal — Minimalist Tech & Engineering Blog')
+@section('title', 'TechJournal — Catatan tentang kode dan gagasan')
+@section('meta_description', 'Tulisan tentang software engineering, Laravel, dan proses membangun produk digital.')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
-    <!-- ─── Hero Section ────────────────────────────────────────────────── -->
-    <div class="py-12 md:py-16 text-center max-w-3xl mx-auto">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-50 dark:bg-cyan-950/80 border border-cyan-200 dark:border-cyan-800 text-cyan-700 dark:text-cyan-300 text-xs font-semibold uppercase tracking-wider mb-6">
-            <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-            Personal Tech & Software Engineering Blog
-        </div>
-        
-        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
-            Architecting <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">Modern Web</span> Applications & Ideas.
+<div class="mx-auto max-w-4xl px-5 pb-20 pt-14 sm:px-8 sm:pt-20">
+    <header class="mb-12 max-w-3xl">
+        <p class="mb-5 font-mono text-xs uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">
+            Jurnal pribadi <span aria-hidden="true">/</span> Software &amp; proses
+        </p>
+        <h1 id="page-title" class="text-4xl font-semibold leading-[1.08] tracking-[-0.04em] text-zinc-900 dark:text-zinc-100 sm:text-5xl">
+            Membangun sesuatu yang berarti, satu baris kode pada satu waktu.
         </h1>
-        
-        <p class="mt-4 text-lg text-slate-600 dark:text-slate-400 font-normal leading-relaxed">
-            Catatan mendalam, panduan arsitektur Laravel, tips performa, serta ulasan teknologi modern terkini untuk para developer.
+        <p class="mt-5 max-w-2xl text-lg leading-8 text-zinc-600 dark:text-zinc-300">
+            Catatan tentang software engineering, Laravel, dan pelajaran kecil dari proses membuat produk.
         </p>
 
-        <!-- Search input mobile / hero fallback -->
-        <div class="mt-8 md:hidden max-w-md mx-auto">
-            <form action="{{ route('home') }}" method="GET" class="relative">
-                <input 
-                    type="text" 
-                    name="search" 
-                    value="{{ request('search') }}"
-                    placeholder="Search articles..." 
-                    class="w-full pl-10 pr-4 py-2.5 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-full border border-slate-200 dark:border-slate-800 focus:border-cyan-500 dark:focus:border-cyan-400 focus:outline-none shadow-sm"
-                >
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ─── Category Filter Pills ────────────────────────────────────────── -->
-    <div class="mb-10 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 overflow-x-auto no-scrollbar">
-        <div class="flex items-center gap-2 min-w-max">
-            <!-- All Categories -->
-            <a 
-                href="{{ route('home') }}" 
-                class="px-4 py-2 rounded-full text-xs font-semibold transition-all {{ !request('category') ? 'bg-cyan-600 text-white shadow-sm shadow-cyan-600/30' : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700' }}"
+        <form action="{{ route('home') }}" method="GET" role="search" class="mt-7 flex max-w-lg gap-2">
+            <label for="article-search" class="sr-only">Cari artikel</label>
+            <input
+                id="article-search"
+                type="search"
+                name="search"
+                value="{{ $search }}"
+                placeholder="Cari artikel…"
+                class="min-w-0 flex-1 rounded-lg border border-zinc-200 bg-white px-4 py-2.5 text-sm text-zinc-800 placeholder:text-zinc-500 focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400/30 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-400"
             >
-                All Articles
-            </a>
+            @if(request('category'))
+                <input type="hidden" name="category" value="{{ request('category') }}">
+            @endif
+            @if(request('tag'))
+                <input type="hidden" name="tag" value="{{ request('tag') }}">
+            @endif
+            <button type="submit" class="rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-100 transition-colors hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white">
+                Cari
+            </button>
+        </form>
+    </header>
 
+    <nav aria-label="Filter kategori artikel" class="category-scroll -mx-5 mb-4 overflow-x-auto border-y border-zinc-200 px-5 py-3 dark:border-zinc-800 sm:-mx-8 sm:px-8">
+        <ul class="flex w-max min-w-full items-center gap-2 text-sm">
+            <li>
+                <a
+                    href="{{ route('home') }}"
+                    @if(!request('category') && !request('tag')) aria-current="page" @endif
+                    class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1.5 font-medium transition-colors {{ !request('category') && !request('tag') ? 'bg-zinc-900 text-zinc-100 dark:bg-zinc-100 dark:text-zinc-900' : 'text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100' }}"
+                >Semua tulisan</a>
+            </li>
             @foreach($categories as $category)
-                <a 
-                    href="{{ route('home', ['category' => $category->slug]) }}" 
-                    class="px-4 py-2 rounded-full text-xs font-semibold transition-all {{ request('category') === $category->slug ? 'bg-cyan-600 text-white shadow-sm shadow-cyan-600/30' : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700' }}"
-                >
-                    {{ $category->name }}
-                    <span class="ml-1 opacity-70">({{ $category->posts_count }})</span>
-                </a>
+                <li>
+                    <a
+                        href="{{ route('home', ['category' => $category->slug]) }}"
+                        @if(request('category') === $category->slug) aria-current="page" @endif
+                        class="inline-flex whitespace-nowrap rounded-full px-3.5 py-1.5 font-medium transition-colors {{ request('category') === $category->slug ? 'bg-zinc-900 text-zinc-100 dark:bg-zinc-100 dark:text-zinc-900' : 'text-zinc-600 hover:bg-zinc-200 hover:text-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100' }}"
+                    >{{ $category->name }} <span class="ml-1 font-mono text-xs opacity-70">{{ $category->posts_count }}</span></a>
+                </li>
             @endforeach
-        </div>
+        </ul>
+    </nav>
 
-        @if(request('search') || request('category') || request('tag'))
-            <a href="{{ route('home') }}" class="text-xs font-medium text-rose-500 hover:text-rose-600 min-w-max ml-4 flex items-center gap-1">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-                Reset Filter
+    @if($search || $activeCategory || $activeTag)
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-200 py-4 text-sm dark:border-zinc-800" role="status">
+            <p class="text-zinc-600 dark:text-zinc-300">
+                @if($search)
+                    Hasil pencarian untuk <strong class="text-zinc-900 dark:text-zinc-100">“{{ $search }}”</strong>
+                @endif
+                @if($activeCategory)
+                    {{ $search ? ' · ' : '' }}Kategori: <strong class="text-zinc-900 dark:text-zinc-100">{{ $activeCategory->name }}</strong>
+                @endif
+                @if($activeTag)
+                    {{ ($search || $activeCategory) ? ' · ' : '' }}Tag: <strong class="text-zinc-900 dark:text-zinc-100">#{{ $activeTag->name }}</strong>
+                @endif
+            </p>
+            <a href="{{ route('home') }}" class="font-medium text-zinc-700 underline underline-offset-4 hover:text-zinc-950 focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:text-zinc-200 dark:hover:text-white">
+                Hapus filter
             </a>
-        @endif
-    </div>
-
-    <!-- Search / Filter active indicator -->
-    @if(request('search'))
-        <div class="mb-6 p-4 rounded-2xl bg-cyan-50 dark:bg-cyan-950/40 border border-cyan-200 dark:border-cyan-900/60 flex items-center justify-between text-sm text-cyan-800 dark:text-cyan-300">
-            <span>Result matching "<strong>{{ request('search') }}</strong>" ({{ $posts->total() }} articles found)</span>
-            <a href="{{ route('home') }}" class="text-xs font-semibold hover:underline">Clear Search</a>
         </div>
     @endif
 
-    <!-- ─── Post Grid ────────────────────────────────────────────────────── -->
-    @if($posts->count() > 0)
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @foreach($posts as $post)
-                <article class="group flex flex-col bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 overflow-hidden shadow-sm hover:shadow-xl hover:border-cyan-500/50 dark:hover:border-cyan-500/40 transition-all duration-300">
-                    
-                    <!-- Thumbnail -->
-                    <a href="{{ route('posts.show', $post->slug) }}" class="relative aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800">
-                        @if($post->featured_image)
-                            <img 
-                                src="{{ asset('storage/' . $post->featured_image) }}" 
-                                alt="{{ $post->title }}"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            >
-                        @else
-                            <!-- Fallback Gradient Thumbnail -->
-                            <div class="w-full h-full bg-gradient-to-br from-slate-800 to-slate-950 flex flex-col items-center justify-center p-6 text-center group-hover:scale-105 transition-transform duration-500">
-                                <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-mono font-bold text-lg mb-2 border border-cyan-500/30">
-                                    &lt;/&gt;
-                                </div>
-                                <span class="text-xs font-medium text-slate-400 uppercase tracking-widest">{{ $post->category->name ?? 'Article' }}</span>
-                            </div>
-                        @endif
+    <section aria-labelledby="articles-heading" class="mt-7">
+        <div class="mb-1 flex items-baseline justify-between gap-4">
+            <h2 id="articles-heading" class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Tulisan</h2>
+            <p class="font-mono text-xs text-zinc-500 dark:text-zinc-400">{{ $posts->total() }} artikel</p>
+        </div>
 
-                        <!-- Reading Time Pill -->
-                        <div class="absolute bottom-3 right-3 px-2.5 py-1 rounded-full bg-slate-900/70 backdrop-blur text-white text-[10px] font-medium flex items-center gap-1">
-                            <svg class="w-3 h-3 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            {{ $post->reading_time }} min read
-                        </div>
-                    </a>
-
-                    <!-- Card Body -->
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <div>
-                            <!-- Category Badge & Date -->
-                            <div class="flex items-center justify-between text-xs mb-3">
-                                @if($post->category)
-                                    <a href="{{ route('home', ['category' => $post->category->slug]) }}" class="font-semibold text-cyan-600 dark:text-cyan-400 hover:underline">
-                                        {{ $post->category->name }}
-                                    </a>
-                                @else
-                                    <span class="text-slate-400">Uncategorized</span>
-                                @endif
-
-                                <time datetime="{{ $post->published_at?->toIso8601String() }}" class="text-slate-400 dark:text-slate-500">
-                                    {{ $post->published_at?->format('M d, Y') }}
+        @if($posts->count() > 0)
+            <ol class="divide-y divide-zinc-200 dark:divide-zinc-800">
+                @foreach($posts as $post)
+                    <li>
+                        <article class="group grid grid-cols-[5.5rem_minmax(0,1fr)_1.25rem] items-start gap-x-4 py-6 sm:grid-cols-[7rem_minmax(0,1fr)_1.5rem] sm:gap-x-6 sm:py-7">
+                            <div class="pt-1">
+                                <time datetime="{{ $post->published_at?->toIso8601String() }}" class="font-mono text-[11px] leading-5 text-zinc-500 dark:text-zinc-400 sm:text-xs">
+                                    {{ $post->published_at?->format('d M Y') }}
                                 </time>
                             </div>
 
-                            <!-- Title -->
-                            <h2 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors line-clamp-2 leading-snug">
-                                <a href="{{ route('posts.show', $post->slug) }}">
-                                    {{ $post->title }}
-                                </a>
-                            </h2>
-
-                            <!-- Summary -->
-                            <p class="mt-3 text-sm text-slate-600 dark:text-slate-400 line-clamp-3 leading-relaxed">
-                                {{ $post->summary ?? Str::limit(strip_tags($post->content), 120) }}
-                            </p>
-                        </div>
-
-                        <!-- Card Footer / Author -->
-                        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
-                            <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full bg-cyan-600 text-white font-bold flex items-center justify-center text-[10px]">
-                                    {{ strtoupper(substr($post->user->name ?? 'A', 0, 1)) }}
-                                </div>
-                                <span class="font-medium text-slate-700 dark:text-slate-300">
+                            <div class="min-w-0">
+                                <p class="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+                                    @if($post->category)
+                                        <a href="{{ route('home', ['category' => $post->category->slug]) }}" class="rounded-sm text-zinc-700 hover:text-zinc-950 hover:underline focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:text-zinc-200 dark:hover:text-white">
+                                            {{ $post->category->name }}
+                                        </a>
+                                        <span aria-hidden="true">/</span>
+                                    @endif
+                                    <span>{{ $post->reading_time }} menit baca</span>
+                                </p>
+                                <h3 class="text-lg font-semibold leading-snug tracking-tight text-zinc-900 transition-colors group-hover:text-zinc-600 dark:text-zinc-100 dark:group-hover:text-zinc-300 sm:text-xl">
+                                    <a href="{{ route('posts.show', $post->slug) }}" class="rounded-sm focus:outline-none focus:ring-2 focus:ring-zinc-500">
+                                        {{ $post->title }}
+                                    </a>
+                                </h3>
+                                <p class="mt-2 line-clamp-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300 sm:text-base">
+                                    {{ $post->summary ?? Str::limit(strip_tags($post->content), 160) }}
+                                </p>
+                                <p class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
                                     {{ $post->user->name ?? 'Admin' }}
-                                </span>
+                                </p>
                             </div>
 
-                            <a href="{{ route('posts.show', $post->slug) }}" class="font-semibold text-cyan-600 dark:text-cyan-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                                Read
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            <span aria-hidden="true" class="mt-1 justify-self-end text-zinc-400 transition-all duration-200 group-hover:translate-x-1 group-hover:text-zinc-800 dark:text-zinc-500 dark:group-hover:text-zinc-100">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M5 12h14m-6-6 6 6-6 6"></path>
                                 </svg>
-                            </a>
-                        </div>
-                    </div>
+                            </span>
+                        </article>
+                    </li>
+                @endforeach
+            </ol>
 
-                </article>
-            @endforeach
-        </div>
-
-        <!-- Pagination -->
-        <div class="mt-12">
-            {{ $posts->links() }}
-        </div>
-    @else
-        <!-- Empty State -->
-        <div class="py-20 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 max-w-lg mx-auto">
-            <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                </svg>
+            <nav aria-label="Navigasi halaman artikel" class="mt-8 border-t border-zinc-200 pt-6 dark:border-zinc-800">
+                {{ $posts->links() }}
+            </nav>
+        @else
+            <div class="border-y border-zinc-200 py-16 text-center dark:border-zinc-800">
+                <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Belum ada tulisan yang cocok.</h3>
+                <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">Coba kata kunci atau kategori lain.</p>
+                <a href="{{ route('home') }}" class="mt-5 inline-flex rounded-sm font-medium text-zinc-700 underline underline-offset-4 hover:text-zinc-950 focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:text-zinc-200 dark:hover:text-white">
+                    Lihat semua tulisan
+                </a>
             </div>
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Belum Ada Artikel</h3>
-            <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Tidak ada artikel yang cocok dengan pencarian atau kategori ini.</p>
-            <a href="{{ route('home') }}" class="inline-block mt-4 px-4 py-2 bg-cyan-600 text-white font-semibold text-xs rounded-full hover:bg-cyan-500 transition-colors">
-                Lihat Semua Artikel
-            </a>
-        </div>
-    @endif
-
+        @endif
+    </section>
 </div>
 @endsection
